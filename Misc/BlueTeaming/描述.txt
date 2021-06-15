@@ -1,0 +1,1 @@
+Powershell scripts were executed by malicious programs. What is the registry key that contained the power shellscript content?（本题flag为非正式形式）

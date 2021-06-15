@@ -1,0 +1,66 @@
+diff --git a/Zend/zend_vm_def.h b/Zend/zend_vm_def.h
+index 4c71250531..b9c51195a4 100644
+--- a/Zend/zend_vm_def.h
++++ b/Zend/zend_vm_def.h
+@@ -8690,6 +8690,7 @@ ZEND_VM_HANDLER(183, ZEND_BIND_STATIC, CV, UNUSED, REF)
+ 	zval *variable_ptr;
+ 
+ 	variable_ptr = GET_OP1_ZVAL_PTR_PTR_UNDEF(BP_VAR_W);
++    i_zval_ptr_dtor(variable_ptr);
+ 
+ 	ht = ZEND_MAP_PTR_GET(EX(func)->op_array.static_variables_ptr);
+ 	if (!ht) {
+@@ -8704,11 +8705,11 @@ ZEND_VM_HANDLER(183, ZEND_BIND_STATIC, CV, UNUSED, REF)
+ 		if (Z_TYPE_P(value) == IS_CONSTANT_AST) {
+ 			SAVE_OPLINE();
+ 			if (UNEXPECTED(zval_update_constant_ex(value, EX(func)->op_array.scope) != SUCCESS)) {
++                ZVAL_NULL(variable_ptr);
+ 				HANDLE_EXCEPTION();
+ 			}
+ 		}
+ 
+-		i_zval_ptr_dtor(variable_ptr);
+ 		if (UNEXPECTED(!Z_ISREF_P(value))) {
+ 			zend_reference *ref = (zend_reference*)emalloc(sizeof(zend_reference));
+ 			GC_SET_REFCOUNT(ref, 2);
+@@ -8723,7 +8724,6 @@ ZEND_VM_HANDLER(183, ZEND_BIND_STATIC, CV, UNUSED, REF)
+ 			ZVAL_REF(variable_ptr, Z_REF_P(value));
+ 		}
+ 	} else {
+-		i_zval_ptr_dtor(variable_ptr);
+ 		ZVAL_COPY(variable_ptr, value);
+ 	}
+ 
+diff --git a/Zend/zend_vm_execute.h b/Zend/zend_vm_execute.h
+index 8c9ddf076a..41d795c39a 100644
+--- a/Zend/zend_vm_execute.h
++++ b/Zend/zend_vm_execute.h
+@@ -47426,6 +47426,7 @@ static ZEND_OPCODE_HANDLER_RET ZEND_FASTCALL ZEND_BIND_STATIC_SPEC_CV_UNUSED_HAN
+ 	zval *variable_ptr;
+ 
+ 	variable_ptr = EX_VAR(opline->op1.var);
++    i_zval_ptr_dtor(variable_ptr);
+ 
+ 	ht = ZEND_MAP_PTR_GET(EX(func)->op_array.static_variables_ptr);
+ 	if (!ht) {
+@@ -47440,11 +47441,11 @@ static ZEND_OPCODE_HANDLER_RET ZEND_FASTCALL ZEND_BIND_STATIC_SPEC_CV_UNUSED_HAN
+ 		if (Z_TYPE_P(value) == IS_CONSTANT_AST) {
+ 			SAVE_OPLINE();
+ 			if (UNEXPECTED(zval_update_constant_ex(value, EX(func)->op_array.scope) != SUCCESS)) {
++                ZVAL_NULL(variable_ptr);
+ 				HANDLE_EXCEPTION();
+ 			}
+ 		}
+ 
+-		i_zval_ptr_dtor(variable_ptr);
+ 		if (UNEXPECTED(!Z_ISREF_P(value))) {
+ 			zend_reference *ref = (zend_reference*)emalloc(sizeof(zend_reference));
+ 			GC_SET_REFCOUNT(ref, 2);
+@@ -47459,7 +47460,6 @@ static ZEND_OPCODE_HANDLER_RET ZEND_FASTCALL ZEND_BIND_STATIC_SPEC_CV_UNUSED_HAN
+ 			ZVAL_REF(variable_ptr, Z_REF_P(value));
+ 		}
+ 	} else {
+-		i_zval_ptr_dtor(variable_ptr);
+ 		ZVAL_COPY(variable_ptr, value);
+ 	}
+ 

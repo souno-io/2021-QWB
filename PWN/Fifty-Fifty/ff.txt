@@ -1,0 +1,17 @@
+```python
+while size_max  len(code)
+    new = raw_input(code )
+    if new == EOF
+        finished = True
+        break
+    code += new + n
+if not finished
+    print(max length exceeded)
+    sys.exit(42)
+file_name = tmp%s % (randstr())
+with open(file_name, w+) as f
+    f.write(code.encode())
+cmd = homectfjerry .%s % file_name
+os.system(cmd)
+os.remove(file_name)
+```
